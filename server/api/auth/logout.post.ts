@@ -1,4 +1,4 @@
 export default defineEventHandler(async (event) => {
-    localStorage.removeItem('token')
+    localStorage.removeItem('accessToken')
     return { success: true };
 });

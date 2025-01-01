@@ -12,6 +12,6 @@ export default defineEventHandler(async (event) => {
     throw new Error('Неверные данные');
   }
 
-  const token = jwt.sign({ role, userId: user.id }, 'Steblin-Aleksandr-key-124][[', { expiresIn: '1h' });
-  return { token };
+  const accessToken = jwt.sign({ role, userId: user.id }, 'Steblin-Aleksandr-key-124][[', { expiresIn: '1h' });
+  return { accessToken };
 });

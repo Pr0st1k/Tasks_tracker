@@ -1,3 +1,17 @@
+<script setup lang="ts">
+  import { ref, onMounted } from 'vue';
+  
+  const isLoading = ref(true);
+  
+  onMounted(() => {
+      isLoading.value = false;
+  });
+
+  definePageMeta({
+    middleware: 'auth'
+  })
+</script>
+
 <template>
     <div v-if="isLoading" class="loader-overlay">
         <div class="banter-loader">
@@ -12,24 +26,14 @@
           <div class="banter-loader__box"></div>
         </div>
     </div>
-    <header class="bg-[#111827] text-white hover:font-bold">
+    <header class="bg-[#111827] text-white">
       <ul class="nav-panel flex flex-row p-4 items-center">
-        <li><NuxtLink to="/" class="p-4">Главная</NuxtLink></li>
-        <li><NuxtLink to="/Auth" class="p-4">Задачи</NuxtLink></li>
+        <li><NuxtLink to="/" class="p-4 hover:font-bold">Главная</NuxtLink></li>
+        <li><NuxtLink to="/Auth" class="p-4 hover:font-bold">Задачи</NuxtLink></li>
       </ul>
     </header>
     <slot />
 </template>
-  
-<script setup lang="ts">
-  import { ref, onMounted } from 'vue';
-  
-  const isLoading = ref(true);
-  
-  onMounted(() => {
-      isLoading.value = false;
-  });
-</script>
   
 <style scoped>
   .loader-overlay {
@@ -38,7 +42,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: white;
+    background: rgb(255, 255, 255);
     display: flex;
     justify-content: center;
     align-items: center;

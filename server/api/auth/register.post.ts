@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
 
   const users: any[] = await $fetch('http://localhost:3001/users');
   if (users.some((u) => u.email === email)) {
-    throw new Error('User already exists');
+    throw new Error('Пользователь с таким email уже существует');
   }
 
   const hashedPassword = bcrypt.hashSync(password, 10);

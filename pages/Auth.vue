@@ -1,3 +1,81 @@
+<script setup lang="ts">
+  import { ref } from 'vue';
+  import Swal from 'sweetalert2';
+
+  const toggleForm = () => {
+    isLoginFormVisible.value = !isLoginFormVisible.value;
+  };
+
+  const isLoginFormVisible = ref(true);
+
+  const email = ref('');
+  const password = ref('');
+
+  const showLoginForm = () => {
+    isLoginFormVisible.value = true;
+  };
+
+  const showRegisterForm = () => {
+    isLoginFormVisible.value = false;
+  };
+
+  const handleLogin = async () => {
+    try {
+      const { accessToken } = await $fetch('/api/auth/login', {
+        method: 'POST',
+        body: { email: email.value, password: password.value },
+      });
+
+      localStorage.setItem('accessToken', accessToken);
+
+      const { valid } = await $fetch('/api/token/validate-token', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }) as {valid: boolean; userId?: number; role?: string};
+
+      if (valid) {
+        alert('Вы успешно вошли!');
+        window.location.replace('/');
+      } else {
+        localStorage.removeItem('authToken');
+        window.location.replace('/Auth');
+      }
+    } catch (error) {
+      alert('Ошибка входа!');
+      window.location.replace('/Auth');
+    }
+  };
+
+  const handleRegister = async () => {
+    try {
+      await $fetch('/api/auth/register', {
+        method: 'POST',
+        body: { email: email.value, password: password.value, role: 'user' },
+      });
+      alert('Регистрация успешна!');
+      window.location.replace('/');
+    } catch (error) {
+      alert('Ошибка регистрации');
+      window.location.replace('/');
+    }
+  };
+
+  onMounted(() => {
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+      Swal.fire({
+        title: 'Вы уже авторизованы',
+        text: 'Сейчас вы будете перенаправлены на главную страницу.',
+        icon: 'info',
+        confirmButtonText: 'ОК',
+      }).then(() => {
+        window.location.href = '/';
+      });
+    }
+  });
+</script>
+
 <template>
   <div class="flex justify-center mt-10">
     <div class="form-container">
@@ -230,58 +308,3 @@
     transition: color 0.3s ease;
   }
 </style>
-
-<script setup lang="ts">
-
-  import { ref } from 'vue';
-
-  const toggleForm = () => {
-    isLoginFormVisible.value = !isLoginFormVisible.value;
-  };
-
-  definePageMeta({
-    middleware: 'auth',
-  });
-
-  const isLoginFormVisible = ref(true);
-
-  const email = ref('');
-  const password = ref('');
-
-  const showLoginForm = () => {
-    isLoginFormVisible.value = true;
-  };
-
-  const showRegisterForm = () => {
-    isLoginFormVisible.value = false;
-  };
-
-  const handleLogin = async () => {
-    try {
-      const { token } = await $fetch('/api/auth/login', {
-        method: 'POST',
-        body: { email: email.value, password: password.value },
-      });
-      localStorage.setItem('token', token);
-      alert('Вы успешно вошли!');
-      window.location.replace('/');
-    } catch (error) {
-      alert('Ошибка входа!');
-      window.location.replace('/');
-    }
-  };
-
-  const handleRegister = async () => {
-    try {
-      await $fetch('/api/auth/register', {
-        method: 'POST',
-        body: { email: email.value, password: password.value, role: 'user' },
-      });
-      alert('Регистрация успешна!');
-      window.location.replace('/');
-    } catch (error) {
-      alert('Ошибка регистрации');
-      window.location.replace('/');
-    }
-  };
-</script>
