@@ -35,15 +35,25 @@
       }) as {valid: boolean; userId?: number; role?: string};
 
       if (valid) {
-        alert('Вы успешно вошли!');
-        window.location.replace('/');
+        Swal.fire({
+          title: 'Вы успешно вошли!',
+          text: 'Сейчас вы будете перенаправлены на главную страницу.',
+          icon: 'success',
+          confirmButtonText: 'ОК',
+        }).then(() => {
+          window.location.href = '/';
+        });
       } else {
         localStorage.removeItem('authToken');
         window.location.replace('/Auth');
       }
     } catch (error) {
-      alert('Ошибка входа!');
-      window.location.replace('/Auth');
+      Swal.fire({
+        title: 'Ошибка входа!',
+        text: 'Проверьте данные и попробуйте еще раз!',
+        icon: 'error',
+        confirmButtonText: 'ОК',
+      });
     }
   };
 
@@ -220,10 +230,6 @@
     outline: 0;
     padding: 0.75rem 1rem;
     color: black;
-  }
-
-  .input-group input:focus {
-    border-color: rgba(167, 139, 250);
   }
 
   .forgot {

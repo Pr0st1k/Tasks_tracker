@@ -39,7 +39,7 @@
   }
 
   .form-container {
-    width: 320px;
+    width: 70%;
     border-radius: 0.75rem;
     background-color: rgba(17, 24, 39, 1);
     padding: 2rem;
@@ -69,20 +69,28 @@
     margin-bottom: 4px;
   }
 
-  .input-group input, select {
+  .input-group input {
+    width: 100%;
+    border-radius: 0.375rem;
+    border: 1px solid rgba(55, 65, 81, 1);
+    outline: 0;
+    background-color: white;
+    color: black;
+    padding: 0.75rem 1rem;
+  }
+
+  .input-group select {
     width: 100%;
     border-radius: 0.375rem;
     border: 1px solid rgba(55, 65, 81, 1);
     outline: 0;
     background-color: rgba(17, 24, 39, 1);
-    padding: 0.75rem 1rem;
     color: rgba(243, 244, 246, 1);
+    padding: 0.75rem 1rem;
   }
 
   .input-group input:focus {
     border-color: rgba(167, 139, 250);
-    background-color: white;
-    color: black;
   }
 
   select#status:focus {

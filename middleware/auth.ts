@@ -20,6 +20,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         if (to.path !== "/Auth") {
           return navigateTo('/Auth');
         }
+      } else {
+        if (valid && (to.path === '/Auth' || to.path === '/auth')) {
+          return navigateTo('/')
+        }
       }
     }
   }
