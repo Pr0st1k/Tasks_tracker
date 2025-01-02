@@ -3,6 +3,10 @@
 
   const tasks = ref([]);
 
+  definePageMeta({
+    middleware: 'auth',
+  });
+
   // Получение задач
   const fetchTasks = async () => {
     const accessToken = localStorage.getItem('accessToken');
@@ -31,7 +35,6 @@
         body: { ...task, status: newStatus },
       });
 
-      // Обновляем статус задачи локально
       task.status = newStatus;
       Swal.fire('Успех!', 'Статус задачи изменен.', 'success');
     } catch (error) {
