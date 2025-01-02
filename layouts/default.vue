@@ -6,10 +6,6 @@
   onMounted(() => {
       isLoading.value = false;
   });
-
-  definePageMeta({
-    middleware: 'auth'
-  })
 </script>
 
 <template>
