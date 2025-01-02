@@ -31,7 +31,7 @@
 
     try {
       await $fetch(`/api/tasks/${taskId}`, {
-        method: 'PUT',
+        method: 'PATCH',
         body: { ...task, status: newStatus },
       });
 
@@ -74,7 +74,7 @@
       if (result.isConfirmed) {
         try {
           await $fetch(`/api/tasks/${taskId}`, {
-            method: 'PUT',
+            method: 'PATCH',
             body: { ...task, ...result.value },
           });
 

@@ -15,14 +15,7 @@
   ],
   "tasks": [
     {
-      "id": 1,
-      "userId": 1,
-      "title": "3421221",
-      "description": "sfddsfvx",
-      "status": "completed"
-    },
-    {
-      "id": 2,
+      "id": "1",
       "userId": 1,
       "title": "124342",
       "description": "5423652",
