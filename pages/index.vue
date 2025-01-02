@@ -2,31 +2,63 @@
   definePageMeta({
     middleware: 'auth',
   });
+
+  const title = ref('');
+  const description = ref('');
+  const status = ref('not-completed');
+
+  const handleCreateTask = async () => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      const { userId } = await $fetch('/api/token/validate-token', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      await $fetch('/api/tasks', {
+        method: 'POST',
+        body: {
+          title: title.value,
+          description: description.value,
+          status: status.value,
+          userId,
+        },
+      });
+
+      alert('Задача успешно создана!');
+      title.value = '';
+      description.value = '';
+      status.value = 'not-completed';
+    } catch (error) {
+      alert('Ошибка при создании задачи');
+    }
+  };
 </script>
 
 <template>
   <div class="flex justify-center mt-10">
     <div class="form-container">
       <p class="title">Добавить задачу</p>
-      <form class="form" method="post">
+      <form @submit.prevent="handleCreateTask" class="form">
         <div class="input-group">
           <div>
             <label for="title">Название</label>
-            <input type="text" name="title" id="title" placeholder="">
+            <input v-model="title" type="text" id="title" placeholder="" required>
           </div>
           <div class="mt-3">
             <label for="description">Описание</label>
-            <input type="text" name="description" id="description" placeholder="">
+            <input v-model="description" type="text" id="description" placeholder="" required>
           </div>
           <div class="mt-3">
-            <label for="title">Статус</label>
-            <select name="status" id="status">
+            <label for="status">Статус</label>
+            <select v-model="status" id="status">
               <option value="completed">Выполнено</option>
               <option value="not-completed">Не выполнено</option>
             </select>
           </div>
         </div>
-        <button class="sign mt-5">Создать</button>
+        <button type="submit" class="sign mt-5">Создать</button>
       </form>
     </div>
   </div>

@@ -25,7 +25,7 @@
     <header class="bg-[#111827] text-white">
       <ul class="nav-panel flex flex-row p-4 items-center">
         <li><NuxtLink to="/" class="p-4 hover:font-bold">Главная</NuxtLink></li>
-        <li><NuxtLink to="/Auth" class="p-4 hover:font-bold">Задачи</NuxtLink></li>
+        <li><NuxtLink to="/taskList" class="p-4 hover:font-bold">Задачи</NuxtLink></li>
       </ul>
     </header>
     <slot />
