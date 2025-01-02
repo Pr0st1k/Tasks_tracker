@@ -1,4 +1,6 @@
 <script setup lang="ts">
+  import Swal from 'sweetalert2';
+
   definePageMeta({
     middleware: 'auth',
   });
@@ -16,7 +18,7 @@
         },
       });
 
-      await $fetch('/api/tasks', {
+      await $fetch('/api/tasks/post', {
         method: 'POST',
         body: {
           title: title.value,
@@ -26,12 +28,20 @@
         },
       });
 
-      alert('Задача успешно создана!');
+      Swal.fire({
+        title: 'Задача успешно создана!',
+        icon: 'success',
+        confirmButtonText: 'ОК',
+      })
       title.value = '';
       description.value = '';
       status.value = 'not-completed';
     } catch (error) {
-      alert('Ошибка при создании задачи');
+      Swal.fire({
+        title: 'Ошибка при создании задачи!',
+        icon: 'error',
+        confirmButtonText: 'ОК',
+      })
     }
   };
 </script>
@@ -44,11 +54,11 @@
         <div class="input-group">
           <div>
             <label for="title">Название</label>
-            <input v-model="title" type="text" id="title" placeholder="" required>
+            <input v-model="title" type="text" id="title" placeholder="Краткое название задачи" maxlength="25" required>
           </div>
           <div class="mt-3">
             <label for="description">Описание</label>
-            <input v-model="description" type="text" id="description" placeholder="" required>
+            <input v-model="description" type="text" id="description" placeholder="Описание задачи" maxlength="80" required>
           </div>
           <div class="mt-3">
             <label for="status">Статус</label>
@@ -64,10 +74,14 @@
   </div>
 </template>
 
-<style>
+<style scoped>
 
   html, body {
     height: -webkit-fill-available;
+  }
+
+  button.sign.mt-5:hover {
+    background-color: rgb(146, 111, 249);
   }
 
   .form-container {
@@ -160,12 +174,6 @@
     border: none;
     border-radius: 0.375rem;
     font-weight: 600;
-  }
-
-  .social-message {
-    display: flex;
-    align-items: center;
-    padding-top: 1rem;
   }
 
   .line {

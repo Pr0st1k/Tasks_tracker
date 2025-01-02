@@ -193,6 +193,10 @@
 
 <style scoped>
 
+  button.sign.mt-5:hover {
+    background-color: rgb(146, 111, 249);
+  }
+
   .form-container {
     width: 320px;
     border-radius: 0.75rem;
