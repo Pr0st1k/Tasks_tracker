@@ -1,80 +1,49 @@
-<<<<<<< HEAD
-# Tasks_tracker
-Проект по выполнению тестового задания, по разработке трекера задач, с аунтификацией пользователей, на Nuxt 3
-=======
-# Nuxt Minimal Starter
+Инструкция по запуску данного проекта.
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
-
-## Setup
-
-Make sure to install dependencies:
+1. Клонируем проект на локальную машину. 
 
 ```bash
-# npm
-npm install
+    cd <'Путь в удобную для вас папку'>
 
-# pnpm
-pnpm install
+    git clone https://github.com/Pr0st1k/Tasks_tracker.git
 
-# yarn
-yarn install
-
-# bun
-bun install
+    cd <'Tasks_tracker'>
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+2. Установка зависимостей
 
 ```bash
-# npm
-npm run dev
+    # npm
+    npm install
 
-# pnpm
-pnpm dev
+    # pnpm
+    pnpm install
 
-# yarn
-yarn dev
+    # yarn
+    yarn install
 
-# bun
-bun run dev
+    # bun
+    bun install
 ```
 
-## Production
-
-Build the application for production:
+3. Запуск сервера разработки
 
 ```bash
-# npm
-npm run build
+    # npm
+    npm run dev
 
-# pnpm
-pnpm build
+    # pnpm
+    pnpm dev
 
-# yarn
-yarn build
+    # yarn
+    yarn dev
 
-# bun
-bun run build
+    # bun
+    bun run dev
 ```
 
-Locally preview production build:
+4. Запуск json-server
 
 ```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
+    json-server --watch db.json --port 3001
 ```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
->>>>>>> master
