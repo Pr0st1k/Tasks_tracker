@@ -1,31 +1,39 @@
 {
   "users": [
     {
-      "id": "1",
+      "id": 1,
       "email": "vavis110805@gmail.com",
       "password": "$2a$10$FbQxJncLAj4qO/puqcyiMeiv1gKydFPmvyO3snn53J1zdONxW44Dm",
-      "role": "user"
-    },
-    {
-      "id": "2",
-      "email": "vavis11080@gmail.com",
-      "password": "$2a$10$A2181dYNrAS3YgxAWHEUr.mVraNX/F5Aqh2vdL6rnL6bjKnvJ4mYO",
       "role": "user"
     }
   ],
   "tasks": [
     {
-      "id": 1,
+      "id": "1",
       "userId": 1,
-      "title": "124342",
-      "description": "5423652",
+      "title": "Название 1",
+      "description": "Описание 1",
+      "status": "not-completed"
+    },
+    {
+      "id": "2",
+      "userId": 1,
+      "title": "Название 2",
+      "description": "Описание 2",
       "status": "completed"
     },
     {
-      "id": 2,
+      "id": "3",
       "userId": 1,
-      "title": "143",
-      "description": "22",
+      "title": "Название 3",
+      "description": "Описание 3",
+      "status": "completed"
+    },
+    {
+      "id": "4",
+      "userId": 1,
+      "title": "Название 4",
+      "description": "Описание 4",
       "status": "completed"
     }
   ]
