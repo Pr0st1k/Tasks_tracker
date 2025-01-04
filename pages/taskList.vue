@@ -1,118 +1,27 @@
 <script setup lang="ts">
+  import { useAuthStore } from '~/stores/auth';
   import Swal from 'sweetalert2';
 
+  definePageMeta({
+    middleware: 'auth'
+  })
+
+  const authStore = useAuthStore();
   const tasks = ref([]);
 
-  definePageMeta({
-    middleware: 'auth',
-  });
-
-  // Получение задач
   const fetchTasks = async () => {
-    const accessToken = localStorage.getItem('accessToken');
     const { userId } = await $fetch('/api/token/validate-token', {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${authStore.accessToken}`,
       },
     });
 
-    tasks.value = await $fetch(`/api/tasks/get`, {
+    tasks.value = await $fetch('/api/tasks/get', {
       params: { userId },
     });
   };
 
   onMounted(fetchTasks);
-
-  const toggleTaskStatus = async (taskId: number) => {
-    const task = tasks.value.find((t) => t.id === taskId);
-    if (!task) return;
-
-    const newStatus = task.status === 'completed' ? 'not-completed' : 'completed';
-
-    try {
-      await $fetch(`/api/tasks/${taskId}`, {
-        method: 'PATCH',
-        body: { ...task, status: newStatus },
-      });
-
-      task.status = newStatus;
-      Swal.fire('Успех!', 'Статус задачи изменен.', 'success');
-    } catch (error) {
-      Swal.fire('Ошибка!', 'Не удалось изменить статус задачи.', 'error');
-    }
-  };
-
-  // Редактирование задачи
-  const editTask = (taskId: number) => {
-    const task = tasks.value.find((t) => t.id === taskId);
-    if (!task) return;
-
-    Swal.fire({
-      title: 'Редактировать задачу',
-      html: `
-        <input id="title" class="swal2-input" placeholder="Название" value="${task.title}">
-        <input id="description" class="swal2-input" placeholder="Описание" value="${task.description}">
-        <select id="status" class="swal2-select">
-          <option value="completed" ${task.status === 'completed' ? 'selected' : ''}>Выполнено</option>
-          <option value="not-completed" ${task.status === 'not-completed' ? 'selected' : ''}>Не выполнено</option>
-        </select>
-      `,
-      focusConfirm: false,
-      preConfirm: () => {
-        const title = (Swal.getPopup()?.querySelector('#title') as HTMLInputElement)?.value;
-        const description = (Swal.getPopup()?.querySelector('#description') as HTMLInputElement)?.value;
-        const status = (Swal.getPopup()?.querySelector('#status') as HTMLSelectElement)?.value;
-
-        if (!title || !description || !status) {
-          Swal.showValidationMessage('Заполните все поля');
-          return false;
-        }
-
-        return { title, description, status };
-      },
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          await $fetch(`/api/tasks/${taskId}`, {
-            method: 'PATCH',
-            body: { ...task, ...result.value },
-          });
-
-          Object.assign(task, result.value);
-          Swal.fire('Успех!', 'Задача обновлена.', 'success');
-        } catch (error) {
-          Swal.fire('Ошибка!', 'Не удалось обновить задачу.', 'error');
-        }
-      }
-    });
-  };
-
-  // Удаление задачи
-  const deleteTask = (taskId: number) => {
-    Swal.fire({
-      title: 'Вы уверены?',
-      text: 'Вы не сможете восстановить эту задачу!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Да, удалить!',
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          await $fetch(`/api/tasks/${taskId}`, {
-            method: 'DELETE',
-          });
-
-          // Удаляем задачу из списка
-          tasks.value = tasks.value.filter((t) => t.id !== taskId);
-          Swal.fire('Успех!', 'Задача удалена.', 'success');
-        } catch (error) {
-          Swal.fire('Ошибка!', 'Не удалось удалить задачу.', 'error');
-        }
-      }
-    });
-  };
 </script>
 
 <template>

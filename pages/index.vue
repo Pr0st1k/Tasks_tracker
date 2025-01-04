@@ -1,9 +1,12 @@
 <script setup lang="ts">
+  import { useAuthStore } from '~/stores/auth';
   import Swal from 'sweetalert2';
 
   definePageMeta({
-    middleware: 'auth',
-  });
+    middleware: 'auth'
+  })
+
+  const authStore = useAuthStore();
 
   const title = ref('');
   const description = ref('');
@@ -11,10 +14,9 @@
 
   const handleCreateTask = async () => {
     try {
-      const accessToken = localStorage.getItem('accessToken');
       const { userId } = await $fetch('/api/token/validate-token', {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${authStore.accessToken}`,
         },
       });
 
@@ -32,7 +34,8 @@
         title: 'Задача успешно создана!',
         icon: 'success',
         confirmButtonText: 'ОК',
-      })
+      });
+
       title.value = '';
       description.value = '';
       status.value = 'not-completed';
@@ -41,7 +44,7 @@
         title: 'Ошибка при создании задачи!',
         icon: 'error',
         confirmButtonText: 'ОК',
-      })
+      });
     }
   };
 </script>

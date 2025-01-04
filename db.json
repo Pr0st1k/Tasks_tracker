@@ -15,10 +15,17 @@
   ],
   "tasks": [
     {
-      "id": "1",
+      "id": 1,
       "userId": 1,
       "title": "124342",
       "description": "5423652",
+      "status": "completed"
+    },
+    {
+      "id": 2,
+      "userId": 1,
+      "title": "143",
+      "description": "22",
       "status": "completed"
     }
   ]

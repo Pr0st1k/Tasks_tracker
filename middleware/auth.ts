@@ -1,30 +1,24 @@
-import Swal from "sweetalert2";
+import { useAuthStore } from '~/stores/auth';
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
+  const authStore = useAuthStore();
+
   if (typeof window !== 'undefined') {
     const accessToken = localStorage.getItem('accessToken');
 
-    if (!accessToken && to.path !== "/Auth") {
+    if (!accessToken) {
+      document.cookie = 'auth-store=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      authStore.clearAuthData();
+    }
+
+    const isValid = await authStore.validateToken();
+
+    if (!isValid && to.path !== '/Auth') {
       return navigateTo('/Auth');
-    } 
+    }
 
-    if (accessToken) {
-      const { valid } = await $fetch('/api/token/validate-token', {
-        headers: { 
-          Authorization: `Bearer ${accessToken}`,
-        }
-      }) as { valid: boolean; userId?: number; role?: string };
-
-      if (!valid) {
-        localStorage.removeItem('accessToken');
-        if (to.path !== "/Auth") {
-          return navigateTo('/Auth');
-        }
-      } else {
-        if (valid && (to.path === '/Auth' || to.path === '/auth')) {
-          return navigateTo('/')
-        }
-      }
+    if (isValid && (to.path === '/Auth' || to.path === '/auth')) {
+      return navigateTo('/');
     }
   }
 });

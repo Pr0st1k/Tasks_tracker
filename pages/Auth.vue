@@ -1,23 +1,16 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { useAuthStore } from '~/stores/auth';
   import Swal from 'sweetalert2';
 
-  const toggleForm = () => {
-    isLoginFormVisible.value = !isLoginFormVisible.value;
-  };
+  definePageMeta({
+    middleware: 'auth'
+  })
+
+  const authStore = useAuthStore();
 
   const isLoginFormVisible = ref(true);
-
   const email = ref('');
   const password = ref('');
-
-  const showLoginForm = () => {
-    isLoginFormVisible.value = true;
-  };
-
-  const showRegisterForm = () => {
-    isLoginFormVisible.value = false;
-  };
 
   const handleLogin = async () => {
     try {
@@ -26,26 +19,25 @@
         body: { email: email.value, password: password.value },
       });
 
-      localStorage.setItem('accessToken', accessToken);
-
-      const { valid } = await $fetch('/api/token/validate-token', {
+      const { valid, userId, role } = await $fetch('/api/token/validate-token', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
-      }) as {valid: boolean; userId?: number; role?: string};
+      });
 
       if (valid) {
+        authStore.setAuthData(accessToken, userId, role);
         Swal.fire({
           title: 'Вы успешно вошли!',
           text: 'Сейчас вы будете перенаправлены на главную страницу.',
           icon: 'success',
           confirmButtonText: 'ОК',
         }).then(() => {
-          window.location.href = '/';
+          navigateTo('/');
         });
       } else {
-        localStorage.removeItem('authToken');
-        window.location.replace('/Auth');
+        authStore.clearAuthData();
+        navigateTo('/Auth');
       }
     } catch (error) {
       Swal.fire({
@@ -57,33 +49,9 @@
     }
   };
 
-  const handleRegister = async () => {
-    try {
-      await $fetch('/api/auth/register', {
-        method: 'POST',
-        body: { email: email.value, password: password.value, role: 'user' },
-      });
-      alert('Регистрация успешна!');
-      window.location.replace('/');
-    } catch (error) {
-      alert('Ошибка регистрации');
-      window.location.replace('/');
-    }
+  const toggleForm = () => {
+    isLoginFormVisible.value = !isLoginFormVisible.value;
   };
-
-  onMounted(() => {
-    const accessToken = localStorage.getItem('accessToken');
-    if (accessToken) {
-      Swal.fire({
-        title: 'Вы уже авторизованы',
-        text: 'Сейчас вы будете перенаправлены на главную страницу.',
-        icon: 'info',
-        confirmButtonText: 'ОК',
-      }).then(() => {
-        window.location.href = '/';
-      });
-    }
-  });
 </script>
 
 <template>
