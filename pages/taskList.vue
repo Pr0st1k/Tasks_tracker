@@ -2,15 +2,23 @@
   import { useAuthStore } from '~/stores/auth';
   import Swal from 'sweetalert2';
 
+  interface Task {
+    id: number;
+    userId: number;
+    title: string;
+    description: string;
+    status: string;
+  }
+
   definePageMeta({
     middleware: 'auth'
   })
 
   const authStore = useAuthStore();
-  const tasks = ref([]);
+  const tasks = ref<Task[]>([]);
 
   const fetchTasks = async () => {
-    const { userId } = await $fetch('/api/token/validate-token', {
+    const { userId } : Task = await $fetch('/api/token/validate-token', {
       headers: {
         Authorization: `Bearer ${authStore.accessToken}`,
       },
@@ -42,7 +50,6 @@
     }
   };
 
-  // Редактирование задачи
   const editTask = (taskId: number) => {
     const task = tasks.value.find((t) => t.id === taskId);
     if (!task) return;
@@ -87,7 +94,6 @@
     });
   };
 
-  // Удаление задачи
   const deleteTask = (taskId: number) => {
     Swal.fire({
       title: 'Вы уверены?',

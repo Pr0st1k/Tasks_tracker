@@ -4,13 +4,19 @@
 
   definePageMeta({
     middleware: 'auth'
-  })
+  });
 
   const authStore = useAuthStore();
 
   const isLoginFormVisible = ref(true);
   const email = ref('');
   const password = ref('');
+
+  interface TokenContent {
+    valid: boolean,
+    userId: number,
+    role: string
+  }
 
   const handleLogin = async () => {
     try {
@@ -19,7 +25,7 @@
         body: { email: email.value, password: password.value },
       });
 
-      const { valid, userId, role } = await $fetch('/api/token/validate-token', {
+      const { valid, userId, role } : TokenContent = await $fetch('/api/token/validate-token', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -43,6 +49,44 @@
       Swal.fire({
         title: 'Ошибка входа!',
         text: 'Проверьте данные и попробуйте еще раз!',
+        icon: 'error',
+        confirmButtonText: 'ОК',
+      });
+    }
+  };
+
+  const handleRegister = async () => {
+  try {
+    const { accessToken } = await $fetch('/api/auth/register', {
+      method: 'POST',
+      body: { email: email.value, password: password.value, role: 'user' },
+    });
+
+    const { valid, userId, role } : TokenContent = await $fetch('/api/token/validate-token', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (valid) {
+      authStore.setAuthData(accessToken, userId, role);
+      Swal.fire({
+        title: 'Успешная регистрация!',
+        text: 'Сейчас вы будете перенаправлены на главную страницу.',
+        icon: 'success',
+        confirmButtonText: 'ОК',
+      }).then(() => {
+        navigateTo('/');
+      });
+    } else {
+      authStore.clearAuthData();
+      navigateTo('/Auth');
+    }
+  } catch (error: any) {
+      const errorMessage = error.data?.message || 'Произошла ошибка при регистрации';
+      Swal.fire({
+        title: 'Ошибка регистрации!',
+        text: errorMessage,
         icon: 'error',
         confirmButtonText: 'ОК',
       });

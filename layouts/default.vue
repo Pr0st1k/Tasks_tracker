@@ -1,11 +1,30 @@
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
-  
+  import { ref, onMounted, watch } from 'vue';
+  import { useAuthStore } from '~/stores/auth';
+  import { storeToRefs } from 'pinia';
+
   const isLoading = ref(true);
-  
-  onMounted(() => {
-      isLoading.value = false;
+  const authStore = useAuthStore();
+  const { accessToken } = storeToRefs(authStore); 
+  const isAuthorized = ref(!!accessToken.value);
+
+  watch(accessToken, (newToken) => {
+    isAuthorized.value = !!newToken; 
   });
+
+  onMounted(() => {
+    isLoading.value = false;
+  });
+
+  const handleLogout = async () => {
+    try {
+      authStore.clearAuthData(); 
+      isAuthorized.value = false;
+      navigateTo('/Auth');
+    } catch (error) {
+      console.error('Ошибка при выходе:', error);
+    }
+  };
 </script>
 
 <template>
@@ -22,11 +41,14 @@
           <div class="banter-loader__box"></div>
         </div>
     </div>
-    <header class="bg-[#111827] text-white">
+    <header class="bg-[#111827] text-white flex justify-between px-8">
       <ul class="nav-panel flex flex-row p-4 items-center">
         <li><NuxtLink to="/" class="p-4 hover:font-bold">Главная</NuxtLink></li>
         <li><NuxtLink to="/taskList" class="p-4 hover:font-bold">Задачи</NuxtLink></li>
       </ul>
+      <button v-if="isAuthorized" @click="handleLogout" class="p-4 hover:font-bold text-white hover:text-red-600">
+        Выход
+      </button>
     </header>
     <slot />
 </template>
