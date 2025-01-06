@@ -4,7 +4,15 @@
 
   definePageMeta({
     middleware: 'auth'
-  })
+  });
+
+  interface Task {
+    id: number;
+    userId: number;
+    title: string;
+    description: string;
+    status: string;
+  }
 
   const authStore = useAuthStore();
 
@@ -14,7 +22,7 @@
 
   const handleCreateTask = async () => {
     try {
-      const { userId } = await $fetch('/api/token/validate-token', {
+      const { userId } : Task = await $fetch('/api/token/validate-token', {
         headers: {
           Authorization: `Bearer ${authStore.accessToken}`,
         },

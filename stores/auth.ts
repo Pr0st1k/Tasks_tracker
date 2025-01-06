@@ -26,10 +26,11 @@ export const useAuthStore = defineStore('auth', {
         this.userId = null;
         this.role = null;
         localStorage.removeItem('accessToken');
+        document.cookie = 'auth-store=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
       },
-      async validateToken() {
+      async validateToken(): Promise<{ valid: boolean; userId?: number; role?: string }> {
         if (!this.accessToken) {
-          return { valid: false, userId: null, role: null };
+          return { valid: false };
         }
       
         try {
@@ -45,15 +46,15 @@ export const useAuthStore = defineStore('auth', {
             return { valid: true, userId, role };
           } else {
             this.clearAuthData();
-            return { valid: false, userId: null, role: null };
+            return { valid: false };
           }
         } catch (error) {
           this.clearAuthData();
-          return { valid: false, userId: null, role: null };
+          return { valid: false };
         }
       },
     },
     persist: {
-        key: 'auth-store'
+      key: 'auth-store'
     },
   });

@@ -3,6 +3,10 @@
   import { useAuthStore } from '~/stores/auth';
   import Swal from 'sweetalert2';
 
+  definePageMeta({
+    middleware: 'auth'
+  });
+
   interface Task {
     id: number;
     userId: number;
@@ -15,8 +19,8 @@
   const authStore = useAuthStore();
 
   onMounted(async () => {
-    const { userId } = await authStore.validateToken();
-    if (userId) {
+    const { valid, userId } = await authStore.validateToken();
+    if (valid && userId) {
       await taskStore.fetchTasks(userId);
     }
   });
