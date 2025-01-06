@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { useTaskStore } from '~/stores/tasks';
   import { useAuthStore } from '~/stores/auth';
   import Swal from 'sweetalert2';
 
@@ -10,48 +11,27 @@
     status: string;
   }
 
-  definePageMeta({
-    middleware: 'auth'
-  })
-
+  const taskStore = useTaskStore();
   const authStore = useAuthStore();
-  const tasks = ref<Task[]>([]);
 
-  const fetchTasks = async () => {
-    const { userId } : Task = await $fetch('/api/token/validate-token', {
-      headers: {
-        Authorization: `Bearer ${authStore.accessToken}`,
-      },
-    });
-
-    tasks.value = await $fetch('/api/tasks/get', {
-      params: { userId },
-    });
-  };
-
-  onMounted(fetchTasks);
+  onMounted(async () => {
+    const { userId } = await authStore.validateToken();
+    if (userId) {
+      await taskStore.fetchTasks(userId);
+    }
+  });
 
   const toggleTaskStatus = async (taskId: number) => {
-    const task = tasks.value.find((t) => t.id === taskId);
+    const task = taskStore.tasks.find((t) => t.id === taskId);
     if (!task) return;
 
     const newStatus = task.status === 'completed' ? 'not-completed' : 'completed';
-
-    try {
-      await $fetch(`/api/tasks/${taskId}`, {
-        method: 'PATCH',
-        body: { ...task, status: newStatus },
-      });
-
-      task.status = newStatus;
-      Swal.fire('Успех!', 'Статус задачи изменен.', 'success');
-    } catch (error) {
-      Swal.fire('Ошибка!', 'Не удалось изменить статус задачи.', 'error');
-    }
+    await taskStore.updateTask(taskId, { status: newStatus });
+    Swal.fire('Успех!', 'Статус задачи изменен.', 'success');
   };
 
-  const editTask = (taskId: number) => {
-    const task = tasks.value.find((t) => t.id === taskId);
+  const editTask = async (taskId: number) => {
+    const task = taskStore.tasks.find((t) => t.id === taskId);
     if (!task) return;
 
     Swal.fire({
@@ -79,22 +59,13 @@
       },
     }).then(async (result) => {
       if (result.isConfirmed) {
-        try {
-          await $fetch(`/api/tasks/${taskId}`, {
-            method: 'PATCH',
-            body: { ...task, ...result.value },
-          });
-
-          Object.assign(task, result.value);
-          Swal.fire('Успех!', 'Задача обновлена.', 'success');
-        } catch (error) {
-          Swal.fire('Ошибка!', 'Не удалось обновить задачу.', 'error');
-        }
+        await taskStore.updateTask(taskId, result.value);
+        Swal.fire('Успех!', 'Задача обновлена.', 'success');
       }
     });
   };
 
-  const deleteTask = (taskId: number) => {
+  const deleteTask = async (taskId: number) => {
     Swal.fire({
       title: 'Вы уверены?',
       text: 'Вы не сможете восстановить эту задачу!',
@@ -105,17 +76,8 @@
       confirmButtonText: 'Да, удалить!',
     }).then(async (result) => {
       if (result.isConfirmed) {
-        try {
-          await $fetch(`/api/tasks/${taskId}`, {
-            method: 'DELETE',
-          });
-
-          // Удаляем задачу из списка
-          tasks.value = tasks.value.filter((t) => t.id !== taskId);
-          Swal.fire('Успех!', 'Задача удалена.', 'success');
-        } catch (error) {
-          Swal.fire('Ошибка!', 'Не удалось удалить задачу.', 'error');
-        }
+        await taskStore.deleteTask(taskId);
+        Swal.fire('Успех!', 'Задача удалена.', 'success');
       }
     });
   };
@@ -136,7 +98,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(task, index) in tasks" :key="task.id">
+          <tr v-for="(task, index) in taskStore.tasks" :key="task.id">
             <td>{{ index + 1 }}</td>
             <td>{{ task.title }}</td>
             <td>{{ task.description }}</td>

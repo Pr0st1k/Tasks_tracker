@@ -29,27 +29,27 @@ export const useAuthStore = defineStore('auth', {
       },
       async validateToken() {
         if (!this.accessToken) {
-          return false;
+          return { valid: false, userId: null, role: null };
         }
-  
+      
         try {
           const { valid, userId, role } : TokenContent = await $fetch('/api/token/validate-token', {
             headers: {
               Authorization: `Bearer ${this.accessToken}`,
             },
           });
-  
+      
           if (valid) {
             this.userId = userId;
             this.role = role;
-            return true;
+            return { valid: true, userId, role };
           } else {
             this.clearAuthData();
-            return false;
+            return { valid: false, userId: null, role: null };
           }
         } catch (error) {
           this.clearAuthData();
-          return false;
+          return { valid: false, userId: null, role: null };
         }
       },
     },
