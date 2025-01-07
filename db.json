@@ -1,8 +1,11 @@
 {
   "users": [
-    
+    {
+      "id": "1",
+      "email": "vavis110805@gmail.com",
+      "password": "$2a$10$txCnVC4BiWPpYAg5eJtdruk22332IkPgK0VT/MSQureOd3Jhyxvda",
+      "role": "user"
+    }
   ],
-  "tasks": [
-    
-  ]
+  "tasks": []
 }
