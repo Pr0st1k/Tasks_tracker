@@ -1,77 +1,8 @@
 {
   "users": [
-    {
-      "id": "1",
-      "email": "vavis110805@gmail.com",
-      "password": "$2a$10$FbQxJncLAj4qO/puqcyiMeiv1gKydFPmvyO3snn53J1zdONxW44Dm",
-      "role": "user"
-    },
-    {
-      "id": "2",
-      "email": "test2@test.com",
-      "password": "$2a$10$IUHs3Xly7RNRDQ3fAITdOeZSHtTKZtth270pcXPySlZxDxTezyCCW",
-      "role": "user"
-    },
-    {
-      "id": "3",
-      "email": "test@gmail.com",
-      "password": "$2a$10$0jGlY.foPLdyB0A3qJTLruHA8cmywFOuxLbVMu2BE9VPl6MTpAbw.",
-      "role": "user"
-    },
-    {
-      "id": "4",
-      "email": "test3@test.com",
-      "password": "$2a$10$m0a7AukKjifTIRHaedMVw.hkDDWK896BLEh3kUcTy3RKYW5NHWCm2",
-      "role": "user"
-    },
-    {
-      "id": "4",
-      "email": "test3@test.com",
-      "password": "$2a$10$m0a7AukKjifTIRHaedMVw.hkDDWK896BLEh3kUcTy3RKYW5NHWCm2",
-      "role": "user"
-    },
-    {
-      "id": "6",
-      "email": "vavis110@gmail.com",
-      "password": "$2a$10$uceqVODn1d/QDDeAHRfPrejJZaF.b43pDIFXz3Pmuvo.Ol7UdD.eq",
-      "role": "user"
-    }
+    
   ],
   "tasks": [
-    {
-      "id": "2",
-      "userId": 1,
-      "title": "Название 2",
-      "description": "Описание 2",
-      "status": "completed"
-    },
-    {
-      "id": "3",
-      "userId": 1,
-      "title": "Название 3",
-      "description": "Описание 3",
-      "status": "completed"
-    },
-    {
-      "id": "4",
-      "userId": 1,
-      "title": "Название 4",
-      "description": "Описание 4",
-      "status": "completed"
-    },
-    {
-      "id": "5",
-      "userId": 1,
-      "title": "Тестовое название",
-      "description": "тестовое название",
-      "status": "completed"
-    },
-    {
-      "id": 6,
-      "userId": 1,
-      "title": "test task",
-      "description": "124",
-      "status": "completed"
-    }
+    
   ]
 }

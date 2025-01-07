@@ -121,6 +121,7 @@
             type="password"
             id="password"
             placeholder=""
+            minlength="6"
             required
           />
           <div class="forgot my-3">
@@ -147,6 +148,7 @@
             v-model="password"
             type="password"
             id="password"
+            minlength="6"
             placeholder=""
             required
           />
