@@ -1,26 +1,8 @@
 {
   "users": [
-    {
-      "id": "1",
-      "email": "vavis110805@gmail.com",
-      "password": "$2a$10$DOs13p0V5j1.2PLVjK18BO4BJ/sL44z1FpnDTNJCU5aAliAVpF7zi",
-      "role": "user"
-    }
+
   ],
   "tasks": [
-    {
-      "id": "1",
-      "userId": 1,
-      "title": "1",
-      "description": "124",
-      "status": "completed"
-    },
-    {
-      "id": "2",
-      "userId": 1,
-      "title": "45345",
-      "description": "1414",
-      "status": "completed"
-    }
+    
   ]
 }
