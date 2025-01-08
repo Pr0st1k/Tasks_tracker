@@ -1,19 +1,13 @@
 <script setup lang="ts">
+  import { useTaskStore } from '~/stores/tasks';
   import { useAuthStore } from '~/stores/auth';
   import Swal from 'sweetalert2';
 
   definePageMeta({
-    middleware: 'auth'
+    middleware: 'auth',
   });
 
-  interface Task {
-    id: number;
-    userId: number;
-    title: string;
-    description: string;
-    status: string;
-  }
-
+  const taskStore = useTaskStore();
   const authStore = useAuthStore();
 
   const title = ref('');
@@ -22,20 +16,13 @@
 
   const handleCreateTask = async () => {
     try {
-      const { userId } : Task = await $fetch('/api/token/validate-token', {
-        headers: {
-          Authorization: `Bearer ${authStore.accessToken}`,
-        },
-      });
+      const { userId } = await authStore.validateToken();
 
-      await $fetch('/api/tasks/post', {
-        method: 'POST',
-        body: {
-          title: title.value,
-          description: description.value,
-          status: status.value,
-          userId,
-        },
+      await taskStore.addTask({
+        userId,
+        title: title.value,
+        description: description.value,
+        status: status.value,
       });
 
       Swal.fire({

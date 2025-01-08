@@ -1,19 +1,10 @@
 <script setup lang="ts">
   import { useTaskStore } from '~/stores/tasks';
   import { useAuthStore } from '~/stores/auth';
-  import Swal from 'sweetalert2';
 
   definePageMeta({
-    middleware: 'auth'
+    middleware: 'auth',
   });
-
-  interface Task {
-    id: number;
-    userId: number;
-    title: string;
-    description: string;
-    status: string;
-  }
 
   const taskStore = useTaskStore();
   const authStore = useAuthStore();
@@ -24,67 +15,6 @@
       await taskStore.fetchTasks(userId);
     }
   });
-
-  const toggleTaskStatus = async (taskId: number) => {
-    const task = taskStore.tasks.find((t) => t.id === taskId);
-    if (!task) return;
-
-    const newStatus = task.status === 'completed' ? 'not-completed' : 'completed';
-    await taskStore.updateTask(taskId, { status: newStatus });
-    Swal.fire('Успех!', 'Статус задачи изменен.', 'success');
-  };
-
-  const editTask = async (taskId: number) => {
-    const task = taskStore.tasks.find((t) => t.id === taskId);
-    if (!task) return;
-
-    Swal.fire({
-      title: 'Редактировать задачу',
-      html: `
-        <input id="title" class="swal2-input" placeholder="Название" value="${task.title}">
-        <input id="description" class="swal2-input" placeholder="Описание" value="${task.description}">
-        <select id="status" class="swal2-select">
-          <option value="completed" ${task.status === 'completed' ? 'selected' : ''}>Выполнено</option>
-          <option value="not-completed" ${task.status === 'not-completed' ? 'selected' : ''}>Не выполнено</option>
-        </select>
-      `,
-      focusConfirm: false,
-      preConfirm: () => {
-        const title = (Swal.getPopup()?.querySelector('#title') as HTMLInputElement)?.value;
-        const description = (Swal.getPopup()?.querySelector('#description') as HTMLInputElement)?.value;
-        const status = (Swal.getPopup()?.querySelector('#status') as HTMLSelectElement)?.value;
-
-        if (!title || !description || !status) {
-          Swal.showValidationMessage('Заполните все поля');
-          return false;
-        }
-
-        return { title, description, status };
-      },
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        await taskStore.updateTask(taskId, result.value);
-        Swal.fire('Успех!', 'Задача обновлена.', 'success');
-      }
-    });
-  };
-
-  const deleteTask = async (taskId: number) => {
-    Swal.fire({
-      title: 'Вы уверены?',
-      text: 'Вы не сможете восстановить эту задачу!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Да, удалить!',
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        await taskStore.deleteTask(taskId);
-        Swal.fire('Успех!', 'Задача удалена.', 'success');
-      }
-    });
-  };
 </script>
 
 <template>
@@ -114,14 +44,14 @@
             <td class="actions">
               <button
                 :class="task.status === 'completed' ? 'action-button red' : 'action-button green'"
-                @click="toggleTaskStatus(task.id)"
+                @click="taskStore.toggleTaskStatus(task.id)"
               >
                 {{ task.status === 'completed' ? '✖️' : '✔️' }}
               </button>
-              <button class="action-button blue" @click="editTask(task.id)">
+              <button class="action-button blue" @click="taskStore.editTask(task.id)">
                 ✏️
               </button>
-              <button class="action-button red" @click="deleteTask(task.id)">
+              <button class="action-button red" @click="taskStore.deleteTask(task.id)">
                 🗑️
               </button>
             </td>

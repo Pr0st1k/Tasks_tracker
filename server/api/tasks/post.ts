@@ -1,7 +1,7 @@
 import { defineEventHandler, readBody } from 'h3';
 import { $fetch } from 'ofetch';
+import jwt from 'jsonwebtoken';
 
-// Определяем интерфейс для задачи
 interface Task {
   id: number;
   userId: number;
@@ -11,28 +11,42 @@ interface Task {
 }
 
 export default defineEventHandler(async (event) => {
-  const { title, description, status, userId } = await readBody(event);
+  const authHeader = event.headers.get('Authorization');
 
-  // Получаем текущий список задач
-  const tasks: Task[] = await $fetch('http://localhost:3001/tasks');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    throw createError({ statusCode: 401, statusMessage: 'Unauthorized' });
+  }
 
-  // Генерируем новый ID
-  const newId = tasks.length > 0 ? Math.max(...tasks.map((task) => task.id)) + 1 : 1;
+  const token = authHeader.split(' ')[1];
 
-  // Создаем новую задачу
-  const newTask: Task = {
-    id: newId,
-    userId: Number(userId), // Убедимся, что userId — число
-    title,
-    description,
-    status,
-  };
+  try {
+    const decoded = jwt.verify(token, 'Steblin-Aleksandr-key-124][[') as { userId: number };
 
-  // Добавляем новую задачу в JSON Server
-  await $fetch('http://localhost:3001/tasks', {
-    method: 'POST',
-    body: newTask,
-  });
+    const { title, description, status, userId } = await readBody(event);
 
-  return { message: 'Задача успешно создана' };
+    // Получаем текущий список задач
+    const tasks: Task[] = await $fetch('http://localhost:3001/tasks');
+
+    // Генерируем новый ID
+    const newId = tasks.length > 0 ? Math.max(...tasks.map((task) => task.id)) + 1 : 1;
+
+    // Создаем новую задачу
+    const newTask: Task = {
+      id: newId,
+      userId: Number(userId), // Убедимся, что userId — число
+      title,
+      description,
+      status,
+    };
+
+    // Добавляем новую задачу в JSON Server
+    await $fetch('http://localhost:3001/tasks', {
+      method: 'POST',
+      body: newTask,
+    });
+
+    return { message: 'Задача успешно создана' };
+  } catch (error) {
+    throw createError({ statusCode: 401, statusMessage: 'Invalid token' });
+  }
 });
