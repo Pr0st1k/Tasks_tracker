@@ -1,25 +1,27 @@
-import { defineEventHandler } from 'h3';
+import { defineEventHandler, getQuery, createError } from 'h3';
+import jwt from 'jsonwebtoken';
 import { $fetch } from 'ofetch';
 
-// Определяем интерфейс для задачи
-interface Task {
-  id: number;
-  userId: number;
-  title: string;
-  description: string;
-  status: string;
-}
-
 export default defineEventHandler(async (event) => {
-  // Получаем userId из параметров запроса
-  const query = getQuery(event);
-  const userId = query.userId;
+  const authHeader = event.headers.get('Authorization');
 
-  // Получаем все задачи из JSON Server
-  const tasks: Task[] = await $fetch('http://localhost:3001/tasks');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    throw createError({ statusCode: 401, statusMessage: 'Unauthorized' });
+  }
 
-  // Фильтруем задачи по userId
-  const userTasks = tasks.filter((task: Task) => task.userId === Number(userId));
+  const token = authHeader.split(' ')[1];
 
-  return userTasks;
+  try {
+    const decoded = jwt.verify(token, 'Steblin-Aleksandr-key-124][[') as { userId: string };
+
+    const userId = Number(decoded.userId);
+
+    const tasks = await $fetch('http://localhost:3001/tasks');
+
+    const userTasks = tasks.filter((task: any) => task.userId === userId);
+
+    return userTasks;
+  } catch (error) {
+    throw createError({ statusCode: 401, statusMessage: 'Invalid token' });
+  }
 });
